@@ -43,7 +43,7 @@ if ( projectType && packageJson.tenup.repos[ projectType ] ) {
 			answers.themeName = directoryName;
 		} else if ( 'plugin' === projectType ) {
 			answers.pluginName = directoryName;
-		}  else if ( 'wp-content' === projectType ) {
+		}  else if ( 'project' === projectType ) {
 			answers.projectName = directoryName;
 		}
 	}
@@ -60,15 +60,6 @@ const openSesame = () => {
 				verticalLayout: "default"
 			} )
 		)
-	);
-};
-
-/**
- * Completed Message
- */
-const closeSesame = () => {
-	console.log(
-		chalk.greenBright( '> Setup Complete. Have fun with the project!' )
 	);
 };
 
@@ -138,8 +129,6 @@ const cloneProject = ( projectType, directoryName, name ) => {
 			to: 'languages/' + nameCamelCase + '.pot'
 		}
 	];
-
-	console.log( chalk.green.bold( `✔ Starting ${projectType} setup` ) );
 
 	clone( packageJson.tenup.repos[projectType], directoryName,
 		function( err ) {
@@ -297,7 +286,7 @@ const run = async () => {
 			choices: [
 				'theme',
 				'plugin',
-				'wp-content',
+				'project',
 			],
 		} );
 	}
@@ -319,7 +308,7 @@ const run = async () => {
 			console.error( 'Plugin name is required. Please try again.' );
 			return;
 		}
-	} else if ( 'wp-content' ===  answers.type && '' === answers.projectName ) {
+	} else if ( 'project' ===  answers.type && '' === answers.projectName ) {
 		answers.projectName = await ask( {
 			type: 'input',
 			message: `What is the project name? (required)`,
@@ -339,13 +328,13 @@ const run = async () => {
 	}
 
 	// Clone repository.
-	if ( 'wp-content' === answers.type ) {
+	if ( 'project' === answers.type ) {
 		if ( fs.existsSync( './wp-content' ) ) {
 			console.log( chalk.yellow.bold( '✘ Warning: ' ) + '"wp-content" directory already exists, please remove it or change the path' );
 			process.exit( 1 );
 		}
 		console.log( chalk.yellow( `Setting up your project. This might take a bit.` ) );
-		await cloneProject( 'wp-content', './wp-content', answers.projectName );
+		cloneProject( 'project', './wp-content', answers.projectName );
 		if ( '' !== answers.pluginName ) {
 			cloneProject( 'plugin', './wp-content/plugins/' + answers.pluginName, answers.pluginName );
 		}
